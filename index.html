@@ -12,7 +12,7 @@
 *{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:"DM Sans",sans-serif;color:var(--ink)}
 body{min-height:100vh;display:grid;place-items:center;padding:18px;background:radial-gradient(circle at 20% 10%,#f6eafa,#e3c9f3 45%,#d3b0e8)}
 button{font:inherit;cursor:pointer}
-.shell{width:min(440px,100%);height:min(900px,calc(100dvh - 36px));min-height:650px;padding:9px;border-radius:27px;background:linear-gradient(145deg,#3e185f,#6e3895 65%,#9e69bd);box-shadow:0 25px 80px #35134c55, inset 0 1px 0 #ffffff80;position:relative}
+.shell{width:min(440px,100%);height:min(900px,calc(100dvh - 36px));min-height:650px;padding:9px;border-radius:27px;background:linear-gradient(145deg,#3e185f,#6e3895 65%,#9e69bd);box-shadow:0 25px 80px #35134c55,inset 0 1px 0 #ffffff80;position:relative}
 .app{height:100%;border-radius:19px;overflow:hidden;position:relative;background:var(--cream);display:flex;flex-direction:column;isolation:isolate}
 .app:before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;background:linear-gradient(180deg,#fff 0%,#fffaf6 22%,#fffaf6 100%)}
 .top{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 16px;color:#b69bc4;font-size:10px;letter-spacing:2px;text-transform:uppercase}
@@ -102,10 +102,6 @@ h2{font-size:27px;line-height:1.1;color:#4c2868;font-weight:600;margin:9px 0 12p
 .upload{position:relative;cursor:pointer}.upload input{display:none}
 @media(max-width:480px){body{padding:0;background:#512477}.shell{width:100%;height:100dvh;min-height:620px;border-radius:0;padding:7px}.app{border-radius:15px}.page{padding:15px 23px 20px}.letterlayout{width:calc(100% + 46px);margin-left:-23px;margin-right:-23px}}
 @media(max-height:720px){.shell{height:100dvh;min-height:0}.coverphoto{height:135px}.resultphoto{height:190px}.letterlayout{min-height:400px}.letterphoto{min-height:400px}}
-.music-control{position:absolute;z-index:25;right:14px;bottom:42px;width:42px;height:42px;border-radius:50%;border:1px solid #d8b5e9;background:#fff8ff;color:#7132a7;font-size:19px;box-shadow:0 5px 15px #51247733;cursor:pointer;display:grid;place-items:center;transition:transform .2s,background .2s}
-.music-control:hover{transform:translateY(-2px);background:#f6eafa}
-.music-control.playing{animation:musicPulse 1.8s ease-in-out infinite}
-@keyframes musicPulse{0%,100%{box-shadow:0 5px 15px #51247733}50%{box-shadow:0 5px 22px #b36be877}}
 </style>
 </head>
 <body>
@@ -204,36 +200,10 @@ h2{font-size:27px;line-height:1.1;color:#4c2868;font-weight:600;margin:9px 0 12p
 </div>
 <footer class="footer">✦ MADE WITH LOVE & A LITTLE MAGIC ✦</footer>
 <div class="toast" id="toast"></div>
-<audio id="bgMusic" src="aajseteri.mp3" loop preload="auto"></audio>
-<button class="music-control" id="musicBtn" type="button" aria-label="Play background music" onclick="toggleMusic()">♫</button>
 </main></div>
 <script>
 let current=1,toastTimer;
-const bgMusic=document.getElementById('bgMusic');
-const musicBtn=document.getElementById('musicBtn');
-bgMusic.volume=0.35;
-function startMusic(){
-  bgMusic.play().then(()=>{
-    musicBtn.textContent='♫';
-    musicBtn.classList.add('playing');
-    musicBtn.setAttribute('aria-label','Pause background music');
-  }).catch(()=>{
-    musicBtn.textContent='♪';
-    musicBtn.classList.remove('playing');
-    showToast('Tap the music button to play the song ♡');
-  });
-}
-function toggleMusic(){
-  if(bgMusic.paused){startMusic();}
-  else{
-    bgMusic.pause();
-    musicBtn.textContent='♪';
-    musicBtn.classList.remove('playing');
-    musicBtn.setAttribute('aria-label','Play background music');
-  }
-}
 function go(n){
- if(n===2 && bgMusic.paused) startMusic();
  const old=document.getElementById('page'+current),next=document.getElementById('page'+n);
  old.classList.remove('active');old.classList.add('leaving');
  setTimeout(()=>old.classList.remove('leaving'),600);
@@ -246,4 +216,16 @@ function go(n){
 function toggleNotices(){document.getElementById('noticePanel').classList.toggle('open')}
 document.addEventListener('click',e=>{if(!e.target.closest('.top-actions')&&!e.target.closest('.noticepanel'))document.getElementById('noticePanel').classList.remove('open')});
 function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),2600)}
-function noChoice(){const b=d
+function noChoice(){const b=document.getElementById('noButton');b.textContent='Are you really sure? 🥺';b.style.transform='translateX('+(Math.random()*36-18)+'px)';showToast('The royal system recommends YES 😌')}
+function celebrate(){
+ const root=document.getElementById('app'),icons=['💜','✨','🌸','👑','♡','🌷'];
+ for(let i=0;i<34;i++){const el=document.createElement('span');el.className='fall';el.textContent=icons[Math.floor(Math.random()*icons.length)];el.style.left=Math.random()*100+'%';el.style.animationDelay=(Math.random()*1.3)+'s';el.style.fontSize=(13+Math.random()*13)+'px';root.appendChild(el);setTimeout(()=>el.remove(),5500)}
+ showToast('Her Majesty has officially said YES! 👑');
+}
+function loadPhoto(input,id){if(input.files&&input.files[0]){const r=new FileReader();r.onload=e=>document.getElementById(id).src=e.target.result;r.readAsDataURL(input.files[0]);showToast('Memory photo updated ♡')}}
+const sp=document.getElementById('sparkles');
+for(let i=0;i<18;i++){let s=document.createElement('span');s.className='spark';s.textContent='✦';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=(Math.random()*4)+'s';s.style.fontSize=(7+Math.random()*9)+'px';sp.appendChild(s)}
+window.addEventListener('load',()=>setTimeout(()=>{const l=document.getElementById('loader');l.style.opacity='0';setTimeout(()=>l.remove(),850)},1450));
+</script>
+</body>
+</html>
